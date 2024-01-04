@@ -70,10 +70,10 @@ def callbacks(checkpoint_path):
     return [early_stopping, cp_callback]
 
 
-def fine_tune(model, train_ds, val_ds):
+def fine_tune(model, train_ds, val_ds, augmentation):
     #Define checkpoint callback to save the model's weights
-    checkpoint_path_1 = "training_no_aug/ckpt_top_layers.ckpt"
-    checkpoint_path_2 = "training_no_aug/ckpt.ckpt"
+    checkpoint_path_1 = f"training_{augmentation}/ckpt_top_layers.ckpt"
+    checkpoint_path_2 = f"training_{augmentation}/ckpt.ckpt"
 
     #Freeze pretrained layers
     for layer in model.layers[:19]:
@@ -90,7 +90,7 @@ def fine_tune(model, train_ds, val_ds):
         callbacks=callbacks(checkpoint_path_1)
     )
 
-    np.save('histories/first_training_no_aug.npy', history.history)
+    np.save(f'histories/first_training_{augmentation}.npy', history.history)
 
     # Fine-tuning of convolutional layers. 
     #We will freeze the bottom N layers and train the remaining top layers.
@@ -112,11 +112,17 @@ def fine_tune(model, train_ds, val_ds):
         epochs=2,  # Set a maximum number of epochs
         callbacks=callbacks(checkpoint_path_2)
     )
-    np.save('histories/second_training_no_aug.npy',history.history)
+    np.save(f'histories/second_training_{augmentation}.npy',history.history)
 
 
 
-def main(data_dir, batch_size, img_height, img_width):
+def main(args):
+
+    data_dir = args.data_dir
+    batch_size = args.batch_size
+    img_height = args.img_height
+    img_width = args.img_width
+
     #Train and validation sets
     train_ds, val_ds = train_val_sets(data_dir, batch_size, img_height, img_width)
 
@@ -140,14 +146,9 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size', help='Batch size', default=32)
     parser.add_argument('--img_height', help='Image height', default=180)
     parser.add_argument('--img_width', help='Image width', default=180)
-    parser.add_argument('-a', '--augmentation', help='Augmentation type', default=None)
+    parser.add_argument('-a', '--augmentation', help='Augmentation type', default='no_aug')
     
     args = parser.parse_args()
 
-    data_dir = args.data_dir
-    batch_size = args.batch_size
-    img_height = args.img_height
-    img_width = args.img_width
-
-    #Lauch code
-    main(data_dir, batch_size, img_height, img_width)
+    #Launch code
+    main(args)
