@@ -10,12 +10,10 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
 import csv
 
 
-def train_val_sets(data_dir, batch_size, img_height, img_width):
+def train_val_sets(train_dir, val_dir, batch_size, img_height, img_width):
     #Training set
     train_ds = tf.keras.utils.image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="training",
+    train_dir,
     seed=123,
     image_size=(img_height, img_width),
     batch_size=batch_size,
@@ -23,9 +21,7 @@ def train_val_sets(data_dir, batch_size, img_height, img_width):
 
     #Validation set
     val_ds = tf.keras.utils.image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="validation",
+    val_dir,
     seed=123,
     image_size=(img_height, img_width),
     batch_size=batch_size,
@@ -60,9 +56,9 @@ def custom_vgg16(img_height, img_width, num_classes, weights='imagenet'):
     return Model(inputs=base_model.input, outputs=predictions)
 
 
-def callbacks(checkpoint_path, history_path):
+def callbacks(checkpoint_path, history_path, patience):
     # Define EarlyStopping callback
-    early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=patience, restore_best_weights=True)
 
     #Define checkpoint callback to save the model's weights
     cp_callback = ModelCheckpoint(filepath=checkpoint_path,
@@ -94,7 +90,9 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         filewriter = csv.writer(hist, delimiter=',')
         filewriter.writerow(['epoch','accuracy','loss','val_accuracy','val_loss'])
         train_loss, train_acc = model.evaluate(train_ds, verbose=2)
+        print("Initial train scores measured")
         val_loss, val_acc = model.evaluate(val_ds, verbose=2)
+        print("Initial val scores measured")
         filewriter.writerow([-1, train_acc, train_loss, val_acc, val_loss])
 
     # Train the model
@@ -102,7 +100,7 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         train_ds,
         validation_data=val_ds,
         epochs=epochs//2,  # Set a maximum number of epochs
-        callbacks=callbacks(checkpoint_path_1, history_path)
+        callbacks=callbacks(checkpoint_path_1, history_path, patience=3)
     )
 
     np.save(f'histories/first_training_{augmentation}.npy', history.history)
@@ -133,7 +131,7 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         train_ds,
         validation_data=val_ds,
         epochs=epochs//2,  # Set a maximum number of epochs
-        callbacks=callbacks(checkpoint_path_2, history_path)
+        callbacks=callbacks(checkpoint_path_2, history_path, patience=5)
     )
     np.save(f'histories/second_training_{augmentation}.npy',history.history)
 
@@ -141,7 +139,8 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
 
 def main(args):
 
-    data_dir = args.data_dir
+    train_dir = args.train_dir
+    val_dir = args.val_dir
     batch_size = args.batch_size
     img_height = args.img_height
     img_width = args.img_width
@@ -150,7 +149,8 @@ def main(args):
     learning_rate = args.learning_rate
 
     #Train and validation sets
-    train_ds, val_ds = train_val_sets(data_dir, batch_size, img_height, img_width)
+    train_ds, val_ds = train_val_sets(train_dir, val_dir, batch_size, img_height, img_width)
+    print("Datasets loaded")
 
     #List of the 257 class names
     class_names = train_ds.class_names
@@ -159,6 +159,7 @@ def main(args):
     #Preprocessing
     train_ds = preprocessing(train_ds)
     val_ds = preprocessing(val_ds)
+    print("Datasets preprocessed")
 
     model = custom_vgg16(img_height, img_width, num_classes)
     fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate)
@@ -168,7 +169,8 @@ def main(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
 
-    parser.add_argument('data_dir', help='Data path')
+    parser.add_argument('train_dir', help='Train set path')
+    parser.add_argument('val_dir', help='Validation set path')
     parser.add_argument('-b', '--batch_size', help='Batch size', default=32)
     parser.add_argument('-e', '--epochs', help='Number of epochs', default=40, type=int)
     parser.add_argument('--img_height', help='Image height', default=180)
