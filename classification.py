@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 import tensorflow as tf
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout, RandomFlip
 from keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
 import csv
@@ -31,9 +31,14 @@ def train_val_sets(train_dir, val_dir, batch_size, img_height, img_width):
 
 
 
-def preprocessing(set):
+def preprocessing(set, flip=False):
     #Preprocessing for vgg16
     set = set.map(lambda x, y: (preprocess_input(x), y))
+
+    #Flip data
+    if flip:
+        set = set.map(lambda x, y: (RandomFlip("horizontal_and_vertical")(x), y))
+        print("Added flip")
 
     #prefetch overlaps data preprocessing and model execution while training.
     set = set.prefetch(tf.data.AUTOTUNE)
@@ -157,7 +162,7 @@ def main(args):
     num_classes = len(class_names)
 
     #Preprocessing
-    train_ds = preprocessing(train_ds)
+    train_ds = preprocessing(train_ds, flip=(augmentation=='flip'))
     val_ds = preprocessing(val_ds)
     print("Datasets preprocessed")
 
