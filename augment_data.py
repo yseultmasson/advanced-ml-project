@@ -43,19 +43,22 @@ def main(args):
             #Path of the image
             source_path = os.path.join(category_path, image)
             #Where to save the original and augmented images for the augmented train set
-            destination_path = os.path.join(train_path, category_folder, image)
+            destination_path = os.path.join(train_path, category_folder, image.split(".")[0])
 
             #Copy the original image
-            shutil.copyfile(source_path, destination_path)
+            shutil.copyfile(source_path, f"{destination_path}.jpg")
 
-            #Augment the image and save it 
-            with open(f'{destination_path}_{augmentation}.png', 'wb') as file:
-                #Open original image
-                img_to_augment = Image.open(source_path)
-                #Flip horizontal
-                augmented_img = augment_image(img_to_augment, augmentation)
-                #Save the flipped image
-                augmented_img.save(file, 'PNG')
+            #Augment the image and save it
+            with open(f'{destination_path}_{augmentation}.jpg', 'wb') as file:
+                try:
+                    #Open original image
+                    img_to_augment = Image.open(source_path)
+                    #Flip horizontal
+                    augmented_img = augment_image(img_to_augment, augmentation)
+                    #Save the flipped image
+                    augmented_img.save(file)
+                except Exception as e:
+                    print(e)
 
 
             
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
 
     parser.add_argument('original_train_dir', help='Not augmented train set path')
-    parser.add_argument('-a', '--augmentation', help='Augmentation type')
+    parser.add_argument('-a', '--augmentation', help='Augmentation type', type=str)
     
     args = parser.parse_args()
 

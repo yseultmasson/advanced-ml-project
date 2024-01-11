@@ -171,11 +171,11 @@ if __name__ == '__main__':
 
     parser.add_argument('train_dir', help='Train set path')
     parser.add_argument('val_dir', help='Validation set path')
+    parser.add_argument('-a', '--augmentation', help='Augmentation type', required=True)
     parser.add_argument('-b', '--batch_size', help='Batch size', default=32)
     parser.add_argument('-e', '--epochs', help='Number of epochs', default=40, type=int)
     parser.add_argument('--img_height', help='Image height', default=180)
     parser.add_argument('--img_width', help='Image width', default=180)
-    parser.add_argument('-a', '--augmentation', help='Augmentation type', default='no_aug')
     parser.add_argument('-lr', '--learning_rate', help='Learning rate for the first training (divided by 10 for second training)', default=0.0001, type=float)
     
     args = parser.parse_args()
