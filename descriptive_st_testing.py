@@ -93,4 +93,4 @@ if __name__ == '__main__':
     img_gram = [gram(fmap) for fmap in img_features[:-1]]
     
 #ça devrait me ressortir une image très proche du tableau de Van Gogh, non?
-    transforms.ToPILImage()(style[0])
+    transforms.ToPILImage()(style.squeeze(0).cpu())
