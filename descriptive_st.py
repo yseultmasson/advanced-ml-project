@@ -10,26 +10,17 @@ from tqdm import tqdm
 from utils import *
 from vgg16 import Vgg16
 
-#La Loss MSE pytorch fait une moyenne. Relire le papier pour s'assurer de ce qu'on veut, ainsi que la doc de pytorch.
-
-
-
-def compute_layer_style_loss(loss_fn, gram_style, gram_new_image):
-    c,h,w = gram_new_image.shape
-    #c = number of channels
-    #h,w = height, width of generated image in this channel
-    return loss_fn(gram_new_image, gram_style)/(4*(c*h*w)**2)
-    
-def compute_total_style_loss(loss_fn, gram_styles, gram_new_images):
+def compute_style_loss(loss_fn, gram_style, gram_new_image, weights):
     style_loss = 0.0
 
-    for j in range(len(gram_styles)):
-        style_loss += compute_layer_style_loss(loss_fn,gram_new_images[j], gram_styles[j])
-    return style_loss / len(gram_styles)
+    for j in range(len(gram_style)):
+        style_loss += loss_fn(gram_new_image[j], gram_style[j]) # / (weights[j] ** 2) # / (gram_style[j].shape[2]) ** 2
+
+    return style_loss # / (4 * len(gram_style))
 
 
 def compute_content_loss(loss_fn, content_features, new_image_features):
-    return loss_fn(content_features, new_image_features)/2
+    return loss_fn(content_features, new_image_features) / 2
 
 
 def main(args):
@@ -48,6 +39,7 @@ def main(args):
     content = load_image(args.content_image)
     content = content_transform(content).to(device) #content.size() = torch.Size([3, 256, 256])
     content_features = model(content)
+    content_feats = content_features[-1].unsqueeze(0)
     # content_gram = [gram(fmap) for fmap in content_features]
 
     style_transform = transforms.Compose([
@@ -63,24 +55,26 @@ def main(args):
     style_gram = [gram(fmap) for fmap in style_features[:-1]] #pour style loss comme pour content loss, on ne calcule que les features qui nous intéressent.
 
     new_image = torch.rand((3, args.image_size, args.image_size)).unsqueeze(0).to(device)
-    new_image.requires_grad_(True) #operations on this tensor are now saved.
+    new_image = transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD)(new_image)
+    new_image.requires_grad_(True)
 
-    optimizer = Adam([new_image], args.lr) # j'aurais pensé qu'il faudrait écrire Adam(model.parameters(), args.lr), mais ça ne marche pas.
-    step_scheduler = StepLR(optimizer,step_size=400, gamma=0.98) #tried with different values of gamma, ranging from 0.02 to 0.98, as well as step size, from 10 tto 400. Doesn't change much: enormous content style loss, small but not converging style loss.
-    loss_mse = torch.nn.MSELoss(reduction='sum') #reduction='sum' pour ne pas diviser le résultat par n.
-    
-    
-    for i in tqdm(range(args.iterations), desc="Performing style transfer"): #peut-être ajouter un "file"
-        optimizer.zero_grad()    
-    
-        img_features = model(new_image) #img_features.size = torch.Size([1, 3, 256, 256]). De plus, la new_image change à chaque fois via la ligne de code requires_grad.
+    optimizer = Adam([new_image], args.lr)
+    loss_mse = torch.nn.MSELoss(reduction='sum')
+
+    for i in tqdm(range(args.iterations), desc="Performing style transfer"):
+
+        optimizer.zero_grad()
+        img_features = model(new_image)
+        wghts = [(f.shape[1] * f.shape[2] * f.shape[3]) for f in img_features[:-1]]
+
         img_gram = [gram(fmap) for fmap in img_features[:-1]]
         content_loss = compute_content_loss(loss_fn=loss_mse,
-                                            content_features=content_features[-1], #la clase vgg16 met bien la sortie de la couche 4_2 - soit celle qui nous intéresse pour la content loss- en dernier pour descriptive_st.
-                                            new_image_features=img_features[-1][0]) 
-        style_loss = compute_total_style_loss(loss_fn=loss_mse,
-                                        gram_styles=style_gram,
-                                        gram_new_images=img_gram)
+                                            content_features=content_feats,
+                                            new_image_features=img_features[-1])
+        style_loss = compute_style_loss(loss_fn=loss_mse,
+                                        gram_style=style_gram,
+                                        gram_new_image=img_gram,
+                                        weights=wghts)
 
         loss = args.content_weight * content_loss + args.style_weight * style_loss
         
@@ -117,12 +111,12 @@ if __name__ == '__main__':
     parser.add_argument(
         "--lr",
         type=float,
-        default=8, #avec un learning rate élevé (8 dans descriptive_training)
+        default=1e-1,
         help="Learning rate used during optimization.")
     parser.add_argument(
         "--iterations",
         type=int,
-        default=2000,
+        default=4600,
         help="Number of iterations.")
     parser.add_argument(
         "--style-weight",
@@ -132,7 +126,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--content-weight",
         type=float,
-        default=1,
+        default=1e0,
         help="Weight given to the content loss.")
 
     args = parser.parse_args()
