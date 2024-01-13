@@ -3,14 +3,36 @@ import os
 import shutil
 from argparse import ArgumentParser
 from tqdm import tqdm
+from torch.autograd import Variable
+from torchvision import transforms
+import torch
+import os
+import re
 
-def augment_image(image, augmentation):
+from image_transformer_net import ImageTransformNet
+
+
+def style_transfer(image, style, device):
+    image = transforms(image).unsqueeze(0).to(device)
+
+    image_transform = transforms.Compose([
+        transforms.Resize((args.image_size, args.image_size)),          # scale shortest side to image_size
+        transforms.CenterCrop(args.image_size),      # crop center image_size out
+        transforms.ToTensor(),                  # turn image from [0-255] to [0-1]
+        transforms.Normalize(mean=IMAGENET_MEAN,
+                             std=IMAGENET_STD)      # normalize with ImageNet values
+    ])
+
+    return image
+
+
+def augment_image(image, augmentation, device):
 
     if augmentation == 'flip':
         augmented_img = image.transpose(Image.FLIP_LEFT_RIGHT)
     
-    elif augmentation == 'style_1':
-        print("Not done yet")
+    elif augmentation == 'starry_night':
+        augmented_image = style_transfer(image, augmentation, device)
 
     else:
         raise ValueError("Invalid augmentation value. It must be either 'flip' or 'style_1'.")
@@ -23,6 +45,19 @@ def main(args):
     #Set the arguments
     original_train_path = args.original_train_dir
     augmentation = args.augmentation
+
+    
+
+    if 'starry_night' in augmentation:
+        # useful constants
+        IMAGENET_MEAN = (0.485, 0.456, 0.406)
+        IMAGENET_STD = (0.229, 0.224, 0.225)
+        #Set device
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        
+        style_model = ImageTransformNet().to(device)
+        style_model.load_state_dict(torch.load(args.model_path))
+
 
     # Set the path to the train directory
     train_path = f'{original_train_path}_{augmentation}'
@@ -54,7 +89,7 @@ def main(args):
                     #Open original image
                     img_to_augment = Image.open(source_path)
                     #Flip horizontal
-                    augmented_img = augment_image(img_to_augment, augmentation)
+                    augmented_img = augment_image(img_to_augment, augmentation, device)
                     #Save the flipped image
                     augmented_img.save(file)
                 except Exception as e:
