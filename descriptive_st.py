@@ -60,6 +60,8 @@ def main(args):
 
     optimizer = Adam([new_image], args.lr)
     loss_mse = torch.nn.MSELoss(reduction='sum')
+    step_scheduler = StepLR(optimizer,step_size=400, gamma=0.98) #tried with different values of gamma, ranging from 0.02 to 0.98, as well as step size, from 10 tto 400. Doesn't change much: enormous content style loss, small but not converging style loss.
+
 
     for i in tqdm(range(args.iterations), desc="Performing style transfer"):
 
