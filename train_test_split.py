@@ -3,7 +3,7 @@ import shutil
 from sklearn.model_selection import train_test_split
 
 # Set the path to your dataset
-dataset_path = 'data/256_ObjectCategories'
+dataset_path = 'data/101_ObjectCategories'
 
 # Set the path to the train and test directories
 train_path = 'data/train_set'
@@ -25,7 +25,7 @@ for category_folder in os.listdir(dataset_path):
 
     # Split the images into train and test sets
     train_images, test_images = train_test_split(images, test_size=0.3, random_state=42)
-    train_images, val_images = train_test_split(train_images, test_size=0.3, random_state=42)
+    train_images, val_images = train_test_split(train_images, test_size=0.2, random_state=42)
 
     # Move images to the train folder
     for image in train_images:

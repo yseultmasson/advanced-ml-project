@@ -58,7 +58,7 @@ def custom_vgg16(img_height, img_width, num_classes, weights='imagenet'):
 
 def callbacks(checkpoint_path, history_path, patience):
     # Define EarlyStopping callback
-    early_stopping = EarlyStopping(monitor='val_loss', patience=patience, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_accuracy', patience=patience, restore_best_weights=True)
 
     #Define checkpoint callback to save the model's weights
     cp_callback = ModelCheckpoint(filepath=checkpoint_path,
@@ -73,10 +73,11 @@ def callbacks(checkpoint_path, history_path, patience):
 
 def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
     #Define checkpoint callback to save the model's weights
-    checkpoint_path_1 = f"training_{augmentation}/ckpt_top_layers.ckpt"
-    checkpoint_path_2 = f"training_{augmentation}/ckpt.ckpt"
+    checkpoint_path = f'checkpoints/{augmentation}'
+    if not os.path.exists(checkpoint_path):
+        os.mkdir(checkpoint_path)
 
-    history_path = f"histories/model_history_{augmentation}_log.csv"
+    history_path = f"histories/model_history_{augmentation}.csv"
 
     #Freeze pretrained layers
     for layer in model.layers[:19]:
@@ -97,11 +98,11 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         filewriter.writerow([-1, train_acc, train_loss, val_acc, val_loss])
 
     # Train the model
-    history = model.fit(
+    model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=epochs//2,  # Set a maximum number of epochs
-        callbacks=callbacks(checkpoint_path_1, history_path, patience=3)
+        callbacks=callbacks(f'{checkpoint_path}/first_training.ckpt', history_path, patience=3)
     )
 
     #np.save(f'histories/first_training_{augmentation}.npy', history.history)
@@ -128,11 +129,11 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         filewriter.writerow([-1, train_acc, train_loss, val_acc, val_loss])
     
     # Train the model with early stopping callback
-    history = model.fit(
+    model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=epochs//2,  # Set a maximum number of epochs
-        callbacks=callbacks(checkpoint_path_2, history_path, patience=5)
+        callbacks=callbacks(f'{checkpoint_path}/second_training.ckpt', history_path, patience=5)
     )
     #np.save(f'histories/second_training_{augmentation}.npy',history.history)
 
