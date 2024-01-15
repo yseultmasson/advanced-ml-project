@@ -10,32 +10,40 @@ import os
 import re
 
 from image_transformer_net import ImageTransformNet
+from utils import *
 
 
-def style_transfer(image, style, device):
-    image = transforms(image).unsqueeze(0).to(device)
+def style_transfer(image, device, model, img_size=180):
 
     image_transform = transforms.Compose([
-        transforms.Resize((args.image_size, args.image_size)),          # scale shortest side to image_size
-        transforms.CenterCrop(args.image_size),      # crop center image_size out
+        transforms.Resize((img_size, img_size)),          # scale shortest side to image_size
+        transforms.CenterCrop(img_size),      # crop center image_size out
         transforms.ToTensor(),                  # turn image from [0-255] to [0-1]
         transforms.Normalize(mean=IMAGENET_MEAN,
                              std=IMAGENET_STD)      # normalize with ImageNet values
     ])
 
+    image = image_transform(image).unsqueeze(0).to(device)
+    image = model(image).cpu().data[0]
+    mean = np.array(IMAGENET_MEAN).reshape((3, 1, 1))
+    std = np.array(IMAGENET_STD).reshape((3, 1, 1))
+    image = image.clone().numpy()
+    image = ((image * std + mean).transpose(1, 2, 0) * 255.0).clip(0, 255).astype("uint8")
+    image = Image.fromarray(image)
+
     return image
 
 
-def augment_image(image, augmentation, device):
+def augment_image(image, aug, device, model, img_size=180):
 
-    if augmentation == 'flip':
+    if aug == 'flip':
         augmented_img = image.transpose(Image.FLIP_LEFT_RIGHT)
     
-    elif augmentation == 'starry_night':
-        augmented_image = style_transfer(image, augmentation, device)
+    elif aug in ['starry_night', 'tapestry', 'mosaic']:
+        augmented_img = style_transfer(image, device, model, img_size)
 
     else:
-        raise ValueError("Invalid augmentation value. It must be either 'flip' or 'style_1'.")
+        raise ValueError("Invalid aug value. It must be either 'flip', 'starry_night', 'tapestry' or 'mosaic'.")
 
     return augmented_img
 
@@ -45,18 +53,21 @@ def main(args):
     #Set the arguments
     original_train_path = args.original_train_dir
     augmentation = args.augmentation
+    img_size = args.img_size
 
+    augs = augmentation.split('-')
+
+    #Set device
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
+    models = dict()
 
-    if 'starry_night' in augmentation:
-        # useful constants
-        IMAGENET_MEAN = (0.485, 0.456, 0.406)
-        IMAGENET_STD = (0.229, 0.224, 0.225)
-        #Set device
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
-        style_model = ImageTransformNet().to(device)
-        style_model.load_state_dict(torch.load(args.model_path))
+    for aug in augs:
+        if aug in ['starry_night', 'mosaic', 'tapestry']:
+            models[aug] = ImageTransformNet().to(device)
+            models[aug].load_state_dict(torch.load(f'models/{aug}_2_epochs_82783_samples_2_1.0_cttwght.model'))
+        else:
+            models[aug] = None
 
 
     # Set the path to the train directory
@@ -83,26 +94,32 @@ def main(args):
             #Copy the original image
             shutil.copyfile(source_path, f"{destination_path}.jpg")
 
-            #Augment the image and save it
-            with open(f'{destination_path}_{augmentation}.jpg', 'wb') as file:
-                try:
-                    #Open original image
-                    img_to_augment = Image.open(source_path)
-                    #Flip horizontal
-                    augmented_img = augment_image(img_to_augment, augmentation, device)
-                    #Save the flipped image
-                    augmented_img.save(file)
-                except Exception as e:
-                    print(e)
+            try:
+                #Open original image
+                img_to_augment = Image.open(source_path)
+
+                for aug in augs:
+                    #augment image
+                    augmented_img = augment_image(img_to_augment, aug, device, models[aug], img_size)
+                    
+                    with open(f'{destination_path}_{aug}.jpg', 'wb') as file:
+                        #Save the flipped image
+                        augmented_img.save(file)
+
+            except Exception as e:
+                print(e)
 
 
             
 if __name__ == '__main__':
     parser = ArgumentParser()
 
-    parser.add_argument('original_train_dir', help='Not augmented train set path')
-    parser.add_argument('-a', '--augmentation', help='Augmentation type', type=str)
+    parser.add_argument('--original_train_dir', help='Not augmented train set path')
+    parser.add_argument('-a', '--augmentation', help='Augmentation types, separated by - (ex : starry_night-mosaic-flip)', type=str)
+    parser.add_argument('--img_size', help='Image size', default=180)
     
     args = parser.parse_args()
 
     main(args)
+
+#python augment_data.py --original_train_dir data/train_set -a mosaic

@@ -85,14 +85,15 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
     #Compile the model
     model.compile(optimizer=Adam(learning_rate=learning_rate), loss='categorical_crossentropy', metrics=['accuracy'])
     
+    train_loss, train_acc = model.evaluate(train_ds, verbose=1)
+    print("Initial train scores measured")
+    val_loss, val_acc = model.evaluate(val_ds, verbose=1)
+    print("Initial val scores measured")
+
     #Store initial scores (before training)
     with open(history_path, 'w', newline='') as hist:
         filewriter = csv.writer(hist, delimiter=',')
         filewriter.writerow(['epoch','accuracy','loss','val_accuracy','val_loss'])
-        train_loss, train_acc = model.evaluate(train_ds, verbose=2)
-        print("Initial train scores measured")
-        val_loss, val_acc = model.evaluate(val_ds, verbose=2)
-        print("Initial val scores measured")
         filewriter.writerow([-1, train_acc, train_loss, val_acc, val_loss])
 
     # Train the model
@@ -103,7 +104,7 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         callbacks=callbacks(checkpoint_path_1, history_path, patience=3)
     )
 
-    np.save(f'histories/first_training_{augmentation}.npy', history.history)
+    #np.save(f'histories/first_training_{augmentation}.npy', history.history)
 
     # Fine-tuning of convolutional layers. 
     #We will freeze the bottom N layers and train the remaining top layers.
@@ -119,9 +120,9 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
     model.compile(optimizer=Adam(learning_rate=learning_rate/10), loss='categorical_crossentropy', metrics=['accuracy'])
 
     #Scores before second training
-    with open(history_path,'a') as hist:
-        train_loss, train_acc = model.evaluate(train_ds, verbose=2)
-        val_loss, val_acc = model.evaluate(val_ds, verbose=2)
+    train_loss, train_acc = model.evaluate(train_ds, verbose=1)
+    val_loss, val_acc = model.evaluate(val_ds, verbose=1)
+    with open(history_path,'a') as hist: 
         #hist.write(f"-1, {train_acc}, {train_loss}, {val_acc}, {val_loss}")
         filewriter = csv.writer(hist, delimiter=',')
         filewriter.writerow([-1, train_acc, train_loss, val_acc, val_loss])
@@ -133,7 +134,7 @@ def fine_tune(model, train_ds, val_ds, augmentation, epochs, learning_rate):
         epochs=epochs//2,  # Set a maximum number of epochs
         callbacks=callbacks(checkpoint_path_2, history_path, patience=5)
     )
-    np.save(f'histories/second_training_{augmentation}.npy',history.history)
+    #np.save(f'histories/second_training_{augmentation}.npy',history.history)
 
 
 
@@ -169,8 +170,8 @@ def main(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
 
-    parser.add_argument('train_dir', help='Train set path')
-    parser.add_argument('val_dir', help='Validation set path')
+    parser.add_argument('--train_dir', help='Train set path', required=True)
+    parser.add_argument('--val_dir', help='Validation set path', required=True)
     parser.add_argument('-a', '--augmentation', help='Augmentation type', required=True)
     parser.add_argument('-b', '--batch_size', help='Batch size', default=32)
     parser.add_argument('-e', '--epochs', help='Number of epochs', default=40, type=int)
@@ -182,3 +183,5 @@ if __name__ == '__main__':
 
     #Launch code
     main(args)
+
+#python classification.py --train_dir data/train_set_mosaic --val_dir data/val_set -a mosaic
