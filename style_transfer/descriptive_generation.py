@@ -207,6 +207,7 @@ def neural_style_transfer(config):
     optimizing_img = Variable(init_img, requires_grad=True)
     neural_net = prepare_model(device)    
     
+    print('Using VGG16 in the optimization procedure.')
     
     content_img_set_of_feature_maps = neural_net(content_img)
     style_img_set_of_feature_maps = neural_net(style_img)
@@ -232,8 +233,8 @@ def neural_style_transfer(config):
             total_loss.backward()
         with torch.no_grad():
             save_and_maybe_display(optimizing_img, dump_path, config, cnt, num_of_iterations)
-            # if cnt % 100 == 0 :
-            #     print(f'L-BFGS | iteration: {cnt:03}, total loss={total_loss.item():12.4f}, content_loss={config["content_weight"] * content_loss.item():12.4f}, style loss={config["style_weight"] * style_loss.item():12.4f}') #, tv loss={config["tv_weight"] * tv_loss.item():12.4f}
+            if cnt % 100 == 0 :
+                print(f'L-BFGS | iteration: {cnt:03}, total loss={total_loss.item():12.4f}, content_loss={config["content_weight"] * content_loss.item():12.4f}, style loss={config["style_weight"] * style_loss.item():12.4f}') #, tv loss={config["tv_weight"] * tv_loss.item():12.4f}
         cnt += 1
         return total_loss
     optimizer.step(closure)
