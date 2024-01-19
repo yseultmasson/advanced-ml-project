@@ -84,7 +84,7 @@ git clone https://github.com/yseultmasson/advanced-ml-project/
 ```
 and install the requirements:
 ```bash
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 The style transfer and classification parts are independant. You can run only the style transfer scripts or only the classification scripts.
