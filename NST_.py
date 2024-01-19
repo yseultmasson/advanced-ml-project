@@ -1,5 +1,5 @@
 """
-This code is a rework of an available GitHub repository (available here : https://github.com/nazianafis/Neural-Style-Transfer), itself being an implementation of the work of Gatys et Al (2016).
+This code is a rework of an available GitHub repository available here : https://github.com/nazianafis/Neural-Style-Transfer . This repository is itself an implementation of the work of Gatys et Al (2016).
 Their article is available here: https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf
 
 
@@ -194,6 +194,8 @@ def neural_style_transfer(config):
     content_img_path = os.path.join(config['content_images_dir'], config['content_img_name'])
     style_img_path = os.path.join(config['style_images_dir'], config['style_img_name'])
     out_dir_name = 'combined_' + os.path.split(content_img_path)[1].split('.')[0] + '_' + os.path.split(style_img_path)[1].split('.')[0]
+    # creates a directory, in which the output image will be stored. While the creation of a directory for one image might seem useless, it can be quite practical when we also want to save some intermediate output images, which is made possible by the function "save_and_maybe_display".
+    
     dump_path = os.path.join(config['output_img_dir'], out_dir_name)
     os.makedirs(dump_path, exist_ok=True)
     
@@ -205,7 +207,7 @@ def neural_style_transfer(config):
     optimizing_img = Variable(init_img, requires_grad=True)
     neural_net = prepare_model(device)    
     
-    #
+    
     content_img_set_of_feature_maps = neural_net(content_img)
     style_img_set_of_feature_maps = neural_net(style_img)
     
@@ -256,18 +258,14 @@ style_images_dir = os.path.join(default_resource_dir, 'style') # The program wil
 output_img_dir = os.path.join(default_resource_dir, r'output_images\descriptive_generation') # The program will create subdirectories in which storing the images in the subdirectory "output_images\descriptive_generation" of the images directory.
 img_format = (4, '.jpg')
 
-CONTENT_IMAGE = r'plane.jpg' # this image is found in \images\base_images. Feel free to add any image you want, and change the name accordingly, if you want to test the code on another image.
+CONTENT_IMAGE = r'bus.jpg' # this image is found in \images\base_images. Feel free to add any image you want, and change the name accordingly, if you want to test the code on another image.
 STYLE_IMAGE = 'starry_night.jpg' # this image is found in \images\style. Feel free to add any image you want, and change the name accordingly, if you want to test the code on another image.
-
 
 optimization_config = {'content_img_name': CONTENT_IMAGE, 'style_img_name': STYLE_IMAGE, 'height': 256, 'content_weight': 1.0, 'style_weight': 1000.0}
 optimization_config['content_images_dir'] = content_images_dir
 optimization_config['style_images_dir'] = style_images_dir
 optimization_config['output_img_dir'] = output_img_dir
 optimization_config['img_format'] = img_format
-
-
-
 
 # Running the code
 results_path = neural_style_transfer(optimization_config)
