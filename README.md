@@ -159,7 +159,7 @@ to fill
 
 ### Classification
 
-In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning).
+In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
 
 
 
