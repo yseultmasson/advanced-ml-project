@@ -6,8 +6,7 @@
 
 ## Topic : Neural Style Transfer as a Data Augmentation Method🎨
 
-This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "STaDA: Style Transfer as Data Augmentation", written by Xu Zheng et al. in January 2019. The article can be read here : https://arxiv.org/abs/1909.01056.
-Our report can be found here : (lien vers le rapport, ou dire que le rapport est aussi présent dans le repository)
+This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "[STaDA: Style Transfer as Data Augmentation](https://arxiv.org/abs/1909.01056)", written by Xu Zheng et al. in January 2019. Our report can be found in this repository.
 
 ### Realised by : 
 
@@ -32,7 +31,7 @@ November 2023 - January 2024.
     1. [How to generate images?](#generation)
         1. [For the descriptive approach](#descriptive_generation)
         2. [For the generative approach](#generative_generation)
-        3. [Data augmentation and classification](#augmentation_classification)
+    2. [Data augmentation and classification](#augmentation_classification)
 4. [How was this repository created?](#creation)
     1. [Descriptive approach](#descriptive_creation)
     2. [Generative approach](#generative_creation)
@@ -152,7 +151,7 @@ Head over to the "classification" directory:
 cd classification
 ```
 
-In order to run the classification experiments, you first need to download the Caltech101 dataset (https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
+In order to run the classification experiments, you first need to download the [Caltech101 dataset](https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
 
 ```bash
 python train_test_split.py
@@ -189,13 +188,13 @@ A lot of comments have been written to make sure the code can be somewhat unders
 
 The generative approach relies on several scripts, namely : "image_transformer_net.py", "style_transfer.py", "train.py", "utils.py" and "vgg16.py".
 To implement it, we started from an existing implementation of the method, available here : https://github.com/dxyang/StyleTransfer/tree/master.
-Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused the main functions available in "utils.py".
+Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused some functions from "utils.py".
 Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
 Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods).
 
 ### Classification <a name="classification_creation">
 
-In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
+In order to fine-tune the VGG16 model on our dataset (script "classification.py"), we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs. We built the other classification scripts entirely ourselves.
 
 ## Acknowledgements <a name="ack"></a>
 
