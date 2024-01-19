@@ -69,6 +69,34 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
             └── vgg16.py  
         ├── README.md
         └── requirements.txt
+        │   .gitignore
+
+    advanced-ml-_project
+        │   README.md
+        │   requirements.txt
+        │
+        ├───classification
+        │   │   augment_data.py
+        │   │   classification.py
+        │   │   test_results.ipynb
+        │   │   train_test_split.py
+        │   ├───checkpoints
+        │   ├───histories
+        │   └───results
+        |
+        └───style_transfer <-- Where the 3 models for the generative approach with our 3 base styles are stored.
+            │   image_transformer_net.py
+            │   descriptive_generation.py  <-- the main python file for the descriptive approach.
+            │   style_transfer.py
+            │   train.py
+            │   utils.py
+            │   vgg16.py
+            ├───images  <-- Where all images are stored.
+            │   ├───base_images
+            │   ├───output_images
+            │   └───style
+            └───models
+
         
 
 ### Dependencies <a name="dependencies"></a>
