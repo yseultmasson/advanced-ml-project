@@ -1,8 +1,8 @@
-"""Image transformer network, which turns our input image into a stylized image."""
+"""Image transformation network, which turns an input image into its stylized version."""
 import torch.nn as nn
 import torch
 
-# Class of the convolutional layers that will serve as our encoding layers in the imagetransformnet class.
+# Class of the convolutional layers, used as encoding layers in the ImageTransformNet class and in the ResidualBlock class.
 class ConvLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride):
         super(ConvLayer, self).__init__()
@@ -15,7 +15,7 @@ class ConvLayer(nn.Module):
         out = self.conv2d(out)
         return out
 
-# Class of the Upsample convolutional layers that will serve as our decoding layers in the imagetransformnet class
+# Class of the Upsample convolutional layers, used as decoding layers in the ImageTransformNet class
 class UpsampleConvLayer(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, upsample=None):
         super(UpsampleConvLayer, self).__init__()
@@ -33,9 +33,7 @@ class UpsampleConvLayer(nn.Module):
         out = self.conv2d(out)
         return out
 
-# Residual Block
-#   adapted from pytorch tutorial
-#   https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/deep_residual_network/main.py
+# Residual Block adapted from https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/deep_residual_network/main.py
 class ResidualBlock(nn.Module):
     def __init__(self, channels):
         super(ResidualBlock, self).__init__()
@@ -53,25 +51,23 @@ class ResidualBlock(nn.Module):
         out = self.relu(out)
         return out 
 
-# Image Transform Network, which will be used to transform our input into a stylized image. See our report for more details. 
+# Image transformation network, used to stylize an input image. See our report for more details. 
 class ImageTransformNet(nn.Module):
     def __init__(self):
         super(ImageTransformNet, self).__init__()
-        
-        # nonlinearity, which tends to make the model a bit more complex and efficient.
-        # ReLU converts an input into its positive part. Tanh is the hyperbolic tangent. 
-        self.relu = nn.ReLU()
-        self.tanh = nn.Tanh()
 
-        # encoding layers, which increase the size of the output.
-        self.conv1 = ConvLayer(3, 32, kernel_size=9, stride=1) #Layer "Conv 1" of our report.
+        # ReLU activation, converts an input into its positive part 
+        self.relu = nn.ReLU()
+
+        # encoding (downsampling) layers.
+        self.conv1 = ConvLayer(3, 32, kernel_size=9, stride=1) # Layer "Conv 1" of our report.
         self.in1_e = nn.InstanceNorm2d(32, affine=True) # instance normalization
 
-        self.conv2 = ConvLayer(32, 64, kernel_size=3, stride=2) #Layer "Conv 2" of our report.
-        self.in2_e = nn.InstanceNorm2d(64, affine=True) #instance normalization
+        self.conv2 = ConvLayer(32, 64, kernel_size=3, stride=2) # Layer "Conv 2" of our report.
+        self.in2_e = nn.InstanceNorm2d(64, affine=True)
 
-        self.conv3 = ConvLayer(64, 128, kernel_size=3, stride=2) #Layer "Conv 3" of our report.0
-        self.in3_e = nn.InstanceNorm2d(128, affine=True) #instance normalization
+        self.conv3 = ConvLayer(64, 128, kernel_size=3, stride=2) # Layer "Conv 3" of our report.
+        self.in3_e = nn.InstanceNorm2d(128, affine=True)
 
         # residual layers.
         self.res1 = ResidualBlock(128)
@@ -80,18 +76,18 @@ class ImageTransformNet(nn.Module):
         self.res4 = ResidualBlock(128)
         self.res5 = ResidualBlock(128)
 
-        # decoding layers, which reduce the size of the output.
-        self.deconv3 = UpsampleConvLayer(128, 64, kernel_size=3, stride=1, upsample=2 )#Layer "Deconv 1" of our report.
+        # decoding (upsampling) layers.
+        self.deconv3 = UpsampleConvLayer(128, 64, kernel_size=3, stride=1, upsample=2 ) # Layer "Deconv 1" of our report.
         self.in3_d = nn.InstanceNorm2d(64, affine=True)
 
-        self.deconv2 = UpsampleConvLayer(64, 32, kernel_size=3, stride=1, upsample=2 )#Layer "Deconv 1" of our report.
+        self.deconv2 = UpsampleConvLayer(64, 32, kernel_size=3, stride=1, upsample=2 ) # Layer "Deconv 2" of our report.
         self.in2_d = nn.InstanceNorm2d(32, affine=True)
 
-        self.deconv1 = UpsampleConvLayer(32, 3, kernel_size=9, stride=1)#Layer "Deconv 3" of our report.
+        self.deconv1 = UpsampleConvLayer(32, 3, kernel_size=9, stride=1) # Layer "Deconv 3" of our report.
         self.in1_d = nn.InstanceNorm2d(3, affine=True)
 
     def forward(self, x):
-        # encode : we add the ReLU activation as stated in our report.
+        # encoding layers : convolutions followed by instance normalization and ReLU activation.
         y = self.relu(self.in1_e(self.conv1(x)))
         y = self.relu(self.in2_e(self.conv2(y)))
         y = self.relu(self.in3_e(self.conv3(y)))
@@ -103,10 +99,9 @@ class ImageTransformNet(nn.Module):
         y = self.res4(y)
         y = self.res5(y)
 
-        # decode : we add the ReLU activation as stated in our report.
+        # decoding layers : deconvolutions followed by instance normalization and ReLU activation (not the last one).
         y = self.relu(self.in3_d(self.deconv3(y)))
         y = self.relu(self.in2_d(self.deconv2(y)))
-        #y = self.tanh(self.in1_d(self.deconv1(y)))
         y = self.deconv1(y)
 
         return y

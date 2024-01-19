@@ -7,10 +7,9 @@ import torch
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
-# opens and returns image file as a PIL image (0-255)
 def load_image(filename:str):
     """
-    Opens and returns an image from a filename. It is returned as a PIL image, whose RGB values range from 0 to 255.
+    Opens and returns an image from a filename. It is returned as a PIL image, with RGB values ranging from 0 to 255.
 
     Parameters
     ----------
@@ -27,14 +26,14 @@ def load_image(filename:str):
 
 def save_image(filename:str, data:Image) -> None:
     """
-    saves an image, assuming its data comes in batch form (channels, height, width)
+    Saves an image, assuming its data comes in batch form (channels, height, width)
 
     Parameters
     ----------
     filename : str
         The name of the output file.
-    data : TYPE
-        DESCRIPTION.
+    data : tensor
+        image as a tensor of shape (channels, height, width).
 
     Returns
     -------
@@ -48,19 +47,19 @@ def save_image(filename:str, data:Image) -> None:
     img = Image.fromarray(img)
     img.save(filename)
 
-# Calculate Gram matrix (G = FF^T)
 def gram(x:torch.Tensor) -> np.float32:
     """
-    Calculates the gram matrix of a vector
+    Calculates the gram matrix of a tensor
 
     Parameters
     ----------
-    x : a Tensor
+    x : Tensor
+        feature map as a Tensor of shape (batch_size, channels, height, width)
 
     Returns
     -------
-    G : np.float32
-        The Gram matrix associated to x.
+    G : Tensor
+        The Gram matrix associated to x, of shape (batch_size, channels, channels).
 
     """
     (bs, ch, h, w) = x.size()
