@@ -151,7 +151,7 @@ Head over to the "classification" directory:
 cd classification
 ```
 
-In order to run the classification experiments, you first need to download the Caltech101 dataset (https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
+In order to run the classification experiments, you first need to download the [Caltech101 dataset](https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
 
 ```bash
 python train_test_split.py
