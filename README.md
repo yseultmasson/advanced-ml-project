@@ -1,12 +1,12 @@
-# ENSAE Paris | Institut Polytechnique de Paris
+# ENSAE Paris | IP Paris
 
 ## Advanced Machine Learning
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/LOGO-ENSAE.png/900px-LOGO-ENSAE.png" width="300">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/LOGO-ENSAE.png/900px-LOGO-ENSAE.png" width="200">
 
 ## Topic : Neural Style Transfer as a Data Augmentation Method🎨
 
-This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "STaDA: Style Transfer as Data Augmentation", written by Xu Zheng et al. in January 2019. The article can be read here : https://arxiv.org/abs/1909.01056
+This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "STaDA: Style Transfer as Data Augmentation", written by Xu Zheng et al. in January 2019. The article can be read here : https://arxiv.org/abs/1909.01056.
 Our report can be found here : (lien vers le rapport, ou dire que le rapport est aussi présent dans le repository)
 
 ### Realised by : 
@@ -40,36 +40,13 @@ October 2023 - January 2024.
 
 ## Overview <a name="overview"></a>
 
-Neural Style Transfer (NST) is about manipulating digital images in order to adopt the appearance or visual style of another image. NST algorithms are characterized by their use of deep neural networks for the sake of image transformation.
+Neural Style Transfer (NST) is about manipulating digital images in order to adopt the appearance or visual style of another image. NST algorithms are characterized by their use of deep neural networks for the sake of image transformation (more specifically, adding the style of an image to the content of another image).
 
-In this repository, we explored and coded the two main ways described by Xu Zheng et al. to conduct Neural Style Transfer, namely the descriptive approach and the generative approach. Read our article for an in-depth description of those two approaches. 
+In this repository, we explored and coded the two main ways described by Xu Zheng et al. to conduct Neural Style Transfer, namely the descriptive approach and the generative approach. We then used these models to augment the Caltech101 dataset and compared the effect of different augmentations on a classification task.  These analyses are described in-depth in our report.
 
 
 ## File Description <a name="description"></a>
 ### File Tree <a name="tree"></a>
-    advanced-ml-_project
-        ├── classification
-            ├── histories
-            ├── results
-            ├── augment_data.py <--      
-            ├── classification.py <--
-            ├── test_results.ipynb
-            └── train_test_split.py
-        
-        ├── style_transfer  <-- Where the 3 models for the generative approach with our 3 base styles are stored.
-            ├── images <-- Where all images are stored.
-            |   ├── base-images
-            |   ├── style
-            |   ├── output-images 
-            ├── descriptive_generation.py  <-- the main python file for the descriptive approach.
-            ├── image_transformer_net.py <--      
-            ├── style_transfer.py
-            ├── train.py
-            ├── utils.py
-            └── vgg16.py  
-        ├── README.md
-        └── requirements.txt
-        │   .gitignore
 
     advanced-ml-_project
         │   README.md
