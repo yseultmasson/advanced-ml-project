@@ -82,10 +82,17 @@ First, clone the entire repository:
 ```bash
 git clone https://github.com/yseultmasson/advanced-ml-project/
 ```
-and install the requirements:
+
+If you use conda, create an empty environment :
+```bash
+conda create -n env_name python==3.9.13
+```
+
+Then, install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
+Note that the version of pytorch installed is optimized for CPU. If you want to install another version that works for your GPU, follow the instuctions from [the PyTorch website](https://pytorch.org/get-started/locally/).
 
 The style transfer and classification parts are independant. You can run only the style transfer scripts or only the classification scripts.
 
