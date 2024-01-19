@@ -1,4 +1,4 @@
-"""Main script for model training."""
+"""Main script for model training of the generative approach."""
 import torch
 import os
 from argparse import ArgumentParser
@@ -14,79 +14,107 @@ from utils import *
 from image_transformer_net import ImageTransformNet
 from vgg16 import Vgg16
 
-def train(args):
+def train(args:ArgumentParser) -> None:
+    """
+    Trains the model associated to a style image, and stores it as a .model for later usage.
+
+    Parameters
+    ----------
+    args : Argument Parser
+        arguments passed through a terminal. Here is the list of arguments:
+            
+        args.style_image : a str. The path of the style image to use for the training.
+        args.dataset : a str. The path to the training dataset.
+        args.image-size : an int. The size of the input images (both width and height).
+        args.batch-size : an int. The batch size used during training.
+        args.lr : a float. The learning rate used during optimization.
+        args.epochs : an int. The number of training epochs.
+        args.style-weight : a float. The weight given to the style loss. Default: 1e5
+        args.content-weight : a float. The weight given to the content (feature reconstruction) loss. Default: 1e0
+        args.tv-reg : a boolean. If true, adds a total variation regularization term to the total loss.
+        args.tv-weight : a float. The weight given to the total variation loss. Default : 1e-7
+        args.content-extraction :  an int, between 0 and 3. Layer used to compute the content loss among ('conv1_2', 'conv2_2', 'conv3_3', 'conv4_3')
+
+    Returns
+    -------
+    None. The function automatically saves the trained model in a .model file.
+
+    """
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # define network
-    image_transformer = ImageTransformNet().to(device)
-    optimizer = Adam(image_transformer.parameters(), args.lr) 
+    # instantiate the image transformation network
+    image_transformer = ImageTransformNet().to(device) # loads the image transformation network and sends it to the device.
+    optimizer = Adam(image_transformer.parameters(), args.lr) # instantiate the optimizer with the desired learning rate.
     loss_mse = torch.nn.MSELoss()
 
-    # load vgg network
-    vgg = Vgg16().to(device) #.type(dtype)
+    # instantiate the pretrained vgg network (loss network) and send it to the device
+    vgg = Vgg16().to(device)
 
-    # get training dataset
+    # define image preprocessing steps for training data
     dataset_transform = transforms.Compose([
-        transforms.Resize((args.image_size, args.image_size)),          # scale shortest side to image_size
-        transforms.CenterCrop(args.image_size),      # crop center image_size out
-        transforms.ToTensor(),                  # turn image from [0-255] to [0-1]
+        transforms.Resize((args.image_size, args.image_size)), # forces the image into a square of size (image_size, image_size)
+        transforms.CenterCrop(args.image_size),      # crops the image at the center
+        transforms.ToTensor(),                  # convert the image to a [0., 1.] tensor
         transforms.Normalize(mean=IMAGENET_MEAN,
-                             std=IMAGENET_STD)      # normalize with ImageNet values
+                             std=IMAGENET_STD)      # normalize the tensor with ImageNet values
     ])
 
+    # load the dataset from the desired folder and pass it to the data loader
     start = datetime.now()
     print("Fetching train data")
     train_dataset = datasets.ImageFolder(args.dataset,
-                                         dataset_transform)
+                                         dataset_transform)    
     print(f"Done : {datetime.now() - start}")
 
     train_loader = DataLoader(train_dataset,
                               batch_size = args.batch_size)
 
-    # style image
+
+    # define style image preprocessing steps
     style_transform = transforms.Compose([
-        transforms.ToTensor(),                  # turn image from [0-255] to [0-1]
+        transforms.ToTensor(),
         transforms.Normalize(mean=IMAGENET_MEAN,
-                             std=IMAGENET_STD)      # normalize with ImageNet values
+                             std=IMAGENET_STD)
     ])
     style = load_image(args.style_image)
     style = style_transform(style)
-    style = Variable(style.repeat(args.batch_size, 1, 1, 1)).to(device)
-    style_name = os.path.split(args.style_image)[-1].split('.')[0]
+    
+    style = Variable(style.repeat(args.batch_size, 1, 1, 1)).to(device) # duplicates the tensor to match the batch size.
+    style_name = os.path.split(args.style_image)[-1].split('.')[0] # will be used to create the name of the saved model.
+    
 
-    # calculate gram matrices for style feature layer maps we care about
+    # compute the gram matrices of the style feature maps we care about
     style_features = vgg(style)
-    style_gram = [gram(fmap) for fmap in style_features]
+    style_gram = [gram(fmap) for fmap in style_features] # gram comes from utils.py
 
     for e in range(args.epochs):
         print(f"Starting epoch {e + 1}")
 
-        # track values for...
+        # keep track of the number of processed images as well as the different loss terms
         img_count = 0
         agg_style_loss = 0.0
         agg_content_loss = 0.0
         agg_tv_loss = 0.0
 
         # train network
-        image_transformer.train()
-
+        image_transformer.train() # start training the image transformation network.
         for batch_idx, (x, label) in enumerate(tqdm(train_loader, desc=f"Epoch {e + 1}")):
             img_batch_read = len(x)
             img_count += img_batch_read
 
-            # zero out gradients
+            # reset the gradient computations
             optimizer.zero_grad()
 
-            # input batch to transformer network
+            # feed the input batch to the image transformation network
             x = Variable(x).to(device)
             y_hat = image_transformer(x)
 
-            # get vgg features
+            # compute the vgg features of the generated image(s) and the content image(s)
             y_c_features = vgg(x)
             y_hat_features = vgg(y_hat)
 
-            # calculate style loss
+            # compute the style reconstruction loss
             y_hat_gram = [gram(fmap) for fmap in y_hat_features]
             style_loss = 0.0
             for j in range(4):
@@ -94,17 +122,16 @@ def train(args):
             style_loss = args.style_weight * style_loss
             agg_style_loss += style_loss.item()
 
-            # calculate content loss
+            # compute the content (feature reconstruction) loss
             recon = y_c_features[args.content_extraction]      
             recon_hat = y_hat_features[args.content_extraction]
             content_loss = args.content_weight * loss_mse(recon_hat, recon)
             agg_content_loss += content_loss.item()
 
-            # total loss
+            # compute intermediary total loss
             total_loss = style_loss + content_loss
 
-            # calculate total variation regularization (anisotropic version)
-            # https://www.wikiwand.com/en/Total_variation_denoising
+            # if wanted, compute the total variation regularization and add it to the total loss
             if args.tv_reg:
                 diff_i = torch.sum(torch.abs(y_hat[:, :, :, 1:] - y_hat[:, :, :, :-1]))
                 diff_j = torch.sum(torch.abs(y_hat[:, :, 1:, :] - y_hat[:, :, :-1, :]))
@@ -112,11 +139,11 @@ def train(args):
                 total_loss += tv_loss
                 agg_tv_loss += tv_loss.item()
 
-            # backprop
+            # update model weights
             total_loss.backward()
             optimizer.step()
 
-            # print out status message
+            # display training status every 1000 batches
             if ((batch_idx + 1) % 1000 == 0):
                 status = f"""
                 Epoch {e + 1}: {img_count}/{len(train_dataset)}
@@ -125,7 +152,7 @@ def train(args):
                 agg_tv_loss: {agg_tv_loss / (batch_idx + 1)}"""
                 print(status)
 
-    # save model
+    # save the trained model
     image_transformer.eval()
 
     if not os.path.exists("models"):
