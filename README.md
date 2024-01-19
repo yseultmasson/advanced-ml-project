@@ -58,6 +58,7 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
         │   │   test_results.ipynb
         │   │   train_test_split.py
         │   ├───checkpoints
+        |   ├───data
         │   ├───histories
         │   └───results
         |
@@ -74,36 +75,32 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
             │   └───style
             └───models
 
-        
 
-### Dependencies <a name="dependencies"></a>
-*    Python 3.9+
-*    Libraries: torch, os, numpy, cv2, matplotlib, torchvision, argparse
+## Running the code<a name="run_code"></a>
 
-
-## How to generate images?<a name="generation"></a>
-
-First, you need to install the requirements for the codes to work. Clone the entire repository:
+First, clone the entire repository:
 ```bash
 git clone https://github.com/yseultmasson/advanced-ml-project/
 ```
-
- then run the following command in a terminal:
+and install the requirements:
 ```bash
-python pip install requirements.txt
+pip install requirements.txt
 ```
 
-Once this is done, head over to the "style_transfer" directory:
+The style transfer and classification parts are independant. You can run only the style transfer scripts or only the classification scripts.
+
+### How to generate images?<a name="generation"></a>
+
+Head over to the "style_transfer" directory:
 ```bash
-python cd=style_transfer
+cd style_transfer
 ```
 
-### For the descriptive approach : <a name="descriptive_generation"></a>
+#### For the descriptive approach : <a name="descriptive_generation"></a>
 
-Once this is done, you may run descriptive_generation.py. Find your generated image in the `descriptive_generation` folder inside `images\output-images`.
+Once this is done, you may run descriptive_generation.py. The generated image will be saved in the `descriptive_generation` folder inside `images\output-images`.
 
-The repository already provides 3 style images and 10 base images. If you want to use other images :
-Move the images you want in the according folder between images\base_images and images\style. Then, change the following lines in descriptive_generation.py :
+The repository already provides 3 style images and 10 base images. If you want to use other images, upload them in the folders `images\base_images` or `images\style` according to the type of image, and change the following lines in descriptive_generation.py :
 
 ```
 CONTENT_IMAGE = r"bus.jpg" <-- put the name of the image you want as a base image (line 261)
@@ -111,14 +108,44 @@ STYLE_IMAGE = r"starry_night.jpg" <-- put the name of the image you want as a st
 ```
 
 
-### For the generative approach : <a name="generative_generation"></a>
-You may run the following command in a terminal:
+#### For the generative approach : <a name="generative_generation"></a>
+Say we need to download data first, where?
+Run the following command in a terminal:
 
 ```bash
 python style_transfer.py --model_path models/starry_night_2_epochs_82783_samples_2_1.0_cttwght.model --source data/test_images --output data/test_results
 ```
 
 fill how to use the code with other base and style images.
+
+### Data augmentation and classification
+
+In order to run the classification experiments, you first need to download the Caltech101 dataset (https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
+
+```bash
+python train_test_split.py
+```
+
+To augment the train set with the augmentation strategy `augmentation` (which must be 'flip', 'starry_night', 'mosaic', 'tapestry', or any combination of those separated by a '-', for example 'flip-mosaic-starry_night'), do:
+
+```bash
+python augment_data.py --original_train_dir data/train_set -a augmentation
+```
+
+Then, to fine-tune a VGG16 network on an augmented train set, run:
+
+```bash
+python classification.py --train_dir data/train_set_augmentation --val_dir data/val_set -a augmentation
+```
+and replace `train_set_augmentation` and `augmentation` by the desired augmentation strategy.
+
+To train the model on the original train set, run:
+```bash
+# python classification.py --train_dir data/train_set --val_dir data/val_set -a no_aug
+```
+
+The evalutation of the models on the test set are done in `test_results.ipynb`.
+
 
 ## How was this repository created?<a name="creation">
 
