@@ -62,18 +62,18 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
         │   ├───histories
         │   └───results
         |
-        └───style_transfer <-- Where the 3 models for the generative approach with our 3 base styles are stored.
+        └───style_transfer
             │   image_transformer_net.py
             │   descriptive_generation.py  <-- the main python file for the descriptive approach.
-            │   style_transfer.py
-            │   train.py
+            │   style_transfer.py <-- file to apply a trained generative model to some images.
+            │   train.py <-- file to train a generative model from scratch.
             │   utils.py
             │   vgg16.py
             ├───images  <-- Where all images are stored.
             │   ├───base_images
             │   ├───output_images
             │   └───style
-            └───models
+            └───models <-- Where the 3 models for the generative approach with our 3 base styles are stored.
 
 
 ## Running the code<a name="run_code"></a>
