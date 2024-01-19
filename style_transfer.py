@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from torch.autograd import Variable
 from torchvision import transforms
 from tqdm import tqdm
+from datetime import datetime
 import torch
 import os
 import re
@@ -44,12 +45,17 @@ def style_transfer(args):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    start = datetime.now()
+    count = 0
     for img_fn in tqdm(os.listdir(args.source), desc="Stylizing images"):
         img_path = os.path.join(args.source, img_fn)
         content = preprocess_image(img_path, image_transform, device)
         stylized = style_model(content).cpu()
         out_im_fn = f"{model_name}_{img_fn}"
         save_image(os.path.join(output_dir, out_im_fn), stylized.data[0])
+        count += 1
+
+    print(f"Average inference time : {(datetime.now() - start) / count}")
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Apply a style to an image.')
