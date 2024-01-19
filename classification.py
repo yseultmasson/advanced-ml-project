@@ -139,7 +139,7 @@ def fine_tune(model, train_ds, val_ds, augmentation: str, epochs: int, learning_
     - None
     """
 
-    # Define checkpoint callback to save the model's weights
+    # Define checkpoint path to save the model's weights
     checkpoint_path = f'checkpoints/{augmentation}'
     if not os.path.exists(checkpoint_path):
         os.mkdir(checkpoint_path)
