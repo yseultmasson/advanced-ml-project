@@ -33,6 +33,7 @@ November 2023 - January 2024.
         1. [For the descriptive approach](#descriptive_generation)
         2. [For the generative approach](#generative_generation)
         3. [Data augmentation and classification](#augmentation_classification)
+    2. [Data augmentation and classification](#augmentation_classification)
 4. [How was this repository created?](#creation)
     1. [Descriptive approach](#descriptive_creation)
     2. [Generative approach](#generative_creation)
