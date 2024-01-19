@@ -28,11 +28,11 @@ October 2023 - January 2024.
 
 1. [Overview](#overview)
 2. [File Description](#description)
-    1. [File Tree](#tree)
-    2. [Dependencies](#dependencies)
-3. [How to generate images?](#generation)
-    1. [For the descriptive approach](#descriptive_generation)
-    2. [For the generative approach](#generative_generation)
+3. [Running the code](#run_code)
+    1. [How to generate images?](#generation)
+        1. [For the descriptive approach](#descriptive_generation)
+        2. [For the generative approach](#generative_generation)
+        3. [Data augmentation and classification](#augmentation_classification)
 4. How was this repository created? (#creation)
     1. [For the descriptive approach](#descriptive_creation)
     2. [For the generative approach](#generative_generation)
@@ -46,7 +46,7 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
 
 
 ## File Description <a name="description"></a>
-### File Tree <a name="tree"></a>
+Here is the file tree of the repository.
 
     advanced-ml-_project
         │   README.md
@@ -144,7 +144,7 @@ python train.py --style-image images/style/mosaic.jpg --dataset images/train_dat
 
 You may adjust the style image you want to use, as well as the script's available arguments as you see fit.
 
-### Data augmentation and classification
+### Data augmentation and classification : <a name="augmentation_classification"></a>
 
 In order to run the classification experiments, you first need to download the Caltech101 dataset (https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
 
