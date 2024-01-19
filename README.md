@@ -124,7 +124,7 @@ Once this is done, your "images" folder should look like this :
        ├───output_images
        ├───style
        └───train_data
-                ├───train2014
+                └───train2014
                         ├───image1.jpg
                         └───image2.jpg
 
