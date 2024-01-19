@@ -109,14 +109,33 @@ STYLE_IMAGE = r"starry_night.jpg" <-- put the name of the image you want as a st
 
 
 #### For the generative approach : <a name="generative_generation"></a>
-Say we need to download data first, where?
-Run the following command in a terminal:
-
+If you want to evaluate one of the provided models on the available test images, you can run :
 ```bash
-python style_transfer.py --model_path models/starry_night_2_epochs_82783_samples_2_1.0_cttwght.model --source data/test_images --output data/test_results
+python style_transfer.py --model_path models/mosaic_2_epochs_82783_samples_2_1.0_cttwght.model --source images/base_images --output images/output_images/generative_st
+```
+You may adjust the model you want to you use as you see fit. If you want to evaluate a model on other images than the ones provided here, you just need to create a new folder inside the "images" folder, store your images inside, and adjust te command to execute.
+
+If you want to train a new model from scratch, you first need to collect the training data and store it in a specific folder, inside the "images" folder. To train our models, we used the COCO 2014 training dataset, which you can download here : https://cocodataset.org/#download (we only used the file named '2014 Train images [83K/13GB]', which corresponds to the 'train2014.zip' file). Once you downloaded this file, you can create a 'train_data' folder inside the 'images' one, and extract the content of the 'train2014.zip' file inside it.
+
+Once this is done, your "images" folder should look like this :
+
+├───images
+       ├───base_images
+       ├───output_images
+       ├───style
+       └───train_data
+                ├───train2014
+                        ├───image1.jpg
+                        └───image2.jpg
+
+You may use another dataset of your choice, as long as the resulting folder has the same architecture as the above one.
+
+Once you have your data ready to use, you can run the following command :
+```bash
+python train.py --style-image images/style/mosaic.jpg --dataset images/train_data
 ```
 
-fill how to use the code with other base and style images.
+You may adjust the style image you want to use, as well as the script's available arguments as you see fit.
 
 ### Data augmentation and classification
 
