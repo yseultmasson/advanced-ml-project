@@ -21,21 +21,22 @@ Our report can be found here : (lien vers le rapport, ou dire que le rapport est
 
 #### Academic year: 2023-2024
 
-October 2023 - January 2024.
+November 2023 - January 2024.
 
 
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [File Description](#description)
-    1. [File Tree](#tree)
-    2. [Dependencies](#dependencies)
-3. [How to generate images?](#generation)
-    1. [For the descriptive approach](#descriptive_generation)
-    2. [For the generative approach](#generative_generation)
-4. How was this repository created? (#creation)
-    1. [For the descriptive approach](#descriptive_creation)
-    2. [For the generative approach](#generative_generation)
+3. [Running the code](#run_code)
+    1. [How to generate images?](#generation)
+        1. [For the descriptive approach](#descriptive_generation)
+        2. [For the generative approach](#generative_generation)
+        3. [Data augmentation and classification](#augmentation_classification)
+4. [How was this repository created?](#creation)
+    1. [Descriptive approach](#descriptive_creation)
+    2. [Generative approach](#generative_creation)
+    3. [Classification](#classification_creation)
 5. [Acknowledgements](#ack)
 
 ## Overview <a name="overview"></a>
@@ -46,7 +47,7 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
 
 
 ## File Description <a name="description"></a>
-### File Tree <a name="tree"></a>
+Here is the file tree of the repository.
 
     advanced-ml-_project
         │   README.md
@@ -92,7 +93,7 @@ Then, install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
-Note that the version of pytorch installed is optimized for CPU. If you want to install another version that works for your GPU, follow the instuctions from [the PyTorch website](https://pytorch.org/get-started/locally/).
+Note that the version of pytorch installed is optimized for CPU, so that it works on any computer. If you want to run style transfer scripts, we strongly advise you to download a version that works for GPUs (to do so, follow the instuctions from [the PyTorch website](https://pytorch.org/get-started/locally/)).
 
 The style transfer and classification parts are independant. You can run only the style transfer scripts or only the classification scripts.
 
@@ -144,7 +145,7 @@ python train.py --style-image images/style/mosaic.jpg --dataset images/train_dat
 
 You may adjust the style image you want to use, as well as the script's available arguments as you see fit.
 
-### Data augmentation and classification
+### Data augmentation and classification : <a name="augmentation_classification"></a>
 
 In order to run the classification experiments, you first need to download the Caltech101 dataset (https://data.caltech.edu/records/mzrjq-6wc02), move the folder "101_ObjectCategories" into `classification/data`, and remove the subfolder `BACKGROUNG_Google` (which contains background clutter and is not interesting for our analysis) from `classification/data/101_ObjectCategories`. Then, create the train, validation and test sets by running:
 
@@ -187,7 +188,7 @@ Our "image_transformer_net.py" script is a commented version of the "network.py"
 Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
 Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods).
 
-### Classification
+### Classification <a name="classification_creation">
 
 In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
 
