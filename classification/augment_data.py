@@ -6,6 +6,7 @@
 # python augment_data.py --original_train_dir data/train_set -a mosaic-flip
 
 from PIL import Image
+import numpy as np
 import os
 import shutil
 from argparse import ArgumentParser
@@ -14,6 +15,10 @@ from torchvision import transforms
 import torch
 import os
 from typing import Optional
+import sys
+
+# Add path 
+sys.path.append('../style_transfer/')
 
 from image_transformer_net import ImageTransformNet
 from utils import *
@@ -115,7 +120,7 @@ def main(args):
     for aug in augs:
         if aug in ['starry_night', 'mosaic', 'tapestry']:
             models[aug] = ImageTransformNet().to(device)
-            models[aug].load_state_dict(torch.load(f'models/{aug}_2_epochs_82783_samples_2_1.0_cttwght.model'))
+            models[aug].load_state_dict(torch.load(f'../style_transfer/models/{aug}_2_epochs_82783_samples_2_1.0_cttwght.model'))
         else:
             models[aug] = None
 
