@@ -141,7 +141,7 @@ and replace `train_set_augmentation` and `augmentation` by the desired augmentat
 
 To train the model on the original train set, run:
 ```bash
-# python classification.py --train_dir data/train_set --val_dir data/val_set -a no_aug
+python classification.py --train_dir data/train_set --val_dir data/val_set -a no_aug
 ```
 
 The evalutation of the models on the test set are done in `test_results.ipynb`.
