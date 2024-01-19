@@ -120,7 +120,7 @@ def main(args):
     for aug in augs:
         if aug in ['starry_night', 'mosaic', 'tapestry']:
             models[aug] = ImageTransformNet().to(device)
-            models[aug].load_state_dict(torch.load(f'../style_transfer/models/{aug}_2_epochs_82783_samples_2_1.0_cttwght.model'))
+            models[aug].load_state_dict(torch.load(f'../style_transfer/models/{aug}_2_epochs_82783_samples_2_1.0_cttwght.model', map_location=device))
         else:
             models[aug] = None
 
