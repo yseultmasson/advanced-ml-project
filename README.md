@@ -169,13 +169,13 @@ The evalutation of the models on the test set are done in `test_results.ipynb`.
 ## How was this repository created?<a name="creation">
 
 ### Descriptive approach <a name="descriptive_creation">
-The descriptive approach consists of only one script, "descriptive_generation.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main
+The descriptive approach consists of only one script, "descriptive_generation.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main.
 A lot of comments have been written to make sure the code can be somewhat understandable to somebody who just read the original paper from Gatys et. al. As for the modifications, they were mainly caused by the fact that we wanted to use our own implementation of the VGG16 network instead of the VGG19 network initially used. We also made some changes to the file tree of the repository, because we needed to harmonize this part with the rest of our repository. We did not feel the need to heavily change this code, because it does not represent the core of our work. This part was just needed to make a speed comparison with the code of the generative approach, which would be used much more extensively.
 
 ### Generative approach <a name="generative_creation">
 
 The generative approach relies on several scripts, namely : "image_transformer_net.py", "style_transfer.py", "train.py", "utils.py" and "vgg16.py".
-To implement it, we started from an existing implementation of the method, available here : https://github.com/dxyang/StyleTransfer/tree/master
+To implement it, we started from an existing implementation of the method, available here : https://github.com/dxyang/StyleTransfer/tree/master.
 Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused the main functions available in "utils.py".
 Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
 Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods.
