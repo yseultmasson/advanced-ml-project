@@ -48,23 +48,28 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
 ## File Description <a name="description"></a>
 ### File Tree <a name="tree"></a>
     advanced-ml-_project
-        ├── histories
-        ├── images <-- Where all images are stored.
-        |   ├── base-images
-        |   ├── style
-        |   ├── output-images 
-        |   |   ├── descriptive_generation
-        ├── models  <-- Where the 3 models for the generative approach with our 3 base styles are stored.
-        ├── augment_data.py <--      
-        ├── classification.py <--    
-        ├── image_transformer_net.py <--      
-        ├── NST_.py  <-- the main python file
+        ├── classification
+            ├── histories
+            ├── results
+            ├── augment_data.py <--      
+            ├── classification.py <--
+            ├── test_results.ipynb
+            └── train_test_split.py
+        
+        ├── style_transfer  <-- Where the 3 models for the generative approach with our 3 base styles are stored.
+            ├── images <-- Where all images are stored.
+            |   ├── base-images
+            |   ├── style
+            |   ├── output-images 
+            ├── descriptive_generation.py  <-- the main python file for the descriptive approach.
+            ├── image_transformer_net.py <--      
+            ├── style_transfer.py
+            ├── train.py
+            ├── utils.py
+            └── vgg16.py  
         ├── README.md
-        ├── style_transfer.py
-        ├── train.py
-        ├── train_test_split.py
-        ├── utils.py
-        └── vgg16.py
+        └── requirements.txt
+        
 
 ### Dependencies <a name="dependencies"></a>
 *    Python 3.9+
@@ -82,12 +87,18 @@ git clone https://github.com/yseultmasson/advanced-ml-project/
 ```bash
 python pip install requirements.txt
 ```
+
+Once this is done, head over to the "style_transfer" directory:
+```bash
+python cd=style_transfer
+```
+
 ### For the descriptive approach : <a name="descriptive_generation"></a>
 
-Once this is done, you may run NST_.py. Find your generated image in the `descriptive_generation` folder inside `images\output-images`.
+Once this is done, you may run descriptive_generation.py. Find your generated image in the `descriptive_generation` folder inside `images\output-images`.
 
 The repository already provides 3 style images and 10 base images. If you want to use other images :
-Move the images you want in the according folder between images\base_images and images\style. Then, change the following lines in NST_.py :
+Move the images you want in the according folder between images\base_images and images\style. Then, change the following lines in descriptive_generation.py :
 
 ```
 CONTENT_IMAGE = r"bus.jpg" <-- put the name of the image you want as a base image (line 261)
@@ -107,7 +118,7 @@ fill how to use the code with other base and style images.
 ## How was this repository created?<a name="creation">
 
 ### For the descriptive approach <a name="descriptive_creation">
-The descriptive approach consists of only one script, "NST_.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main
+The descriptive approach consists of only one script, "descriptive_generation.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main
 A lot of comments have been written to make sure the code can be somewhat understandable to somebody who just read the original paper from Gatys et. al. As for the modifications, they were mainly caused by the fact that we wanted to use our own implementation of the VGG16 network instead of the VGG19 network initially used. We also made some changes to the file tree of the repository, because we needed to harmonize this part with the rest of our repository. We did not feel the need to heavily change this code, because it does not represent the core of our work. This part was just needed to make a speed comparison with the code of the generative approach, which would be used much more extensively.
 
 ### For the generative approach <a name="generative_creation">
