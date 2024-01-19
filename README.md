@@ -92,7 +92,7 @@ Then, install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
-Note that the version of pytorch installed is optimized for CPU. If you want to install another version that works for your GPU, follow the instuctions from [the PyTorch website](https://pytorch.org/get-started/locally/).
+Note that the version of pytorch installed is optimized for CPU, so that it works on any computer. If you want to run style transfer scripts, we strongly advise you to download a version that works for GPUs (to do so, follow the instuctions from [the PyTorch website](https://pytorch.org/get-started/locally/))
 
 The style transfer and classification parts are independant. You can run only the style transfer scripts or only the classification scripts.
 
