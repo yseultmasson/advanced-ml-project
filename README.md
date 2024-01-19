@@ -21,7 +21,7 @@ Our report can be found here : (lien vers le rapport, ou dire que le rapport est
 
 #### Academic year: 2023-2024
 
-October 2023 - January 2024.
+November 2023 - January 2024.
 
 
 ## Table of Contents
