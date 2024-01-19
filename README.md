@@ -174,13 +174,15 @@ A lot of comments have been written to make sure the code can be somewhat unders
 
 ### Generative approach <a name="generative_creation">
 
-to fill
+The generative approach relies on several scripts, namely : "image_transformer_net.py", "style_transfer.py", "train.py", "utils.py" and "vgg16.py".
+To implement it, we started from an existing implementation of the method, available here : https://github.com/dxyang/StyleTransfer/tree/master
+Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused the main functions available in "utils.py".
+Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
+Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods.
 
 ### Classification
 
 In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
-
-
 
 ## Acknowledgements <a name="ack"></a>
 
@@ -188,6 +190,7 @@ These are some of the resources we used or consulted while working on this proje
 
 
 * The original paper on neural style transfer by [Gatys et al](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf)
-* The repository used to code the descriptive approach of style transfer, by [nazianafis](https://github.com/nazianafis/Neural-Style-Transfer/tree/main) 
+* The repository used to code the descriptive approach of style transfer, by [nazianafis](https://github.com/nazianafis/Neural-Style-Transfer/tree/main)
+* The repository used to implement the generative approach of style transfer, by [dxyang](https://github.com/dxyang/StyleTransfer/tree/master)
 
 
