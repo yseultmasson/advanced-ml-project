@@ -189,7 +189,7 @@ A lot of comments have been written to make sure the code can be somewhat unders
 
 The generative approach relies on several scripts, namely : "image_transformer_net.py", "style_transfer.py", "train.py", "utils.py" and "vgg16.py".
 To implement it, we started from an existing implementation of the method, available here : https://github.com/dxyang/StyleTransfer/tree/master.
-Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused the main functions available in "utils.py".
+Our "image_transformer_net.py" script is a commented version of the "network.py" script from the existing implementation. We also reused some functions from "utils.py".
 Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
 Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods).
 
