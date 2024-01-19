@@ -6,8 +6,7 @@
 
 ## Topic : Neural Style Transfer as a Data Augmentation Method🎨
 
-This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "STaDA: Style Transfer as Data Augmentation", written by Xu Zheng et al. in January 2019. The article can be read here : https://arxiv.org/abs/1909.01056.
-Our report can be found here : (lien vers le rapport, ou dire que le rapport est aussi présent dans le repository)
+This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "[STaDA: Style Transfer as Data Augmentation](https://arxiv.org/abs/1909.01056)", written by Xu Zheng et al. in January 2019. Our report can be found in this repository.
 
 ### Realised by : 
 
