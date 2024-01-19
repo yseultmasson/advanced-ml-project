@@ -9,8 +9,6 @@
 This GitHub repository constitutes the coding part of our assignment for the course "Advanced Machine Learning". It consists of the reproduction and study of the work "STaDA: Style Transfer as Data Augmentation", written by Xu Zheng et al. in January 2019. The article can be read here : https://arxiv.org/abs/1909.01056
 Our report can be found here : (lien vers le rapport, ou dire que le rapport est aussi présent dans le repository)
 
-
-
 ### Realised by : 
 
 * Matthieu BRICAIRE
@@ -33,9 +31,12 @@ October 2023 - January 2024.
     1. [File Tree](#tree)
     2. [Dependencies](#dependencies)
 3. [How to generate images?](#generation)
-    1. [For the descriptive approach](descriptive_generation)
-    1. [For the generative approach](generative_generation)
-4. [Acknowledgements](#ack)
+    1. [For the descriptive approach](#descriptive_generation)
+    2. [For the generative approach](#generative_generation)
+4. How was this repository created? (#creation)
+    1. [For the descriptive approach](#descriptive_creation)
+    2. [For the generative approach](#generative_generation)
+5. [Acknowledgements](#ack)
 
 ## Overview <a name="overview"></a>
 
@@ -67,8 +68,7 @@ In this repository, we explored and coded the two main ways described by Xu Zhen
 
 ### Dependencies <a name="dependencies"></a>
 *    Python 3.9+
-*    Framework: PyTorch
-*    Libraries: os, numpy, cv2, matplotlib, torchvision, argparse
+*    Libraries: torch, os, numpy, cv2, matplotlib, torchvision, argparse
 
 
 ## How to generate images?<a name="generation"></a>
@@ -104,13 +104,22 @@ python style_transfer.py --model_path models/starry_night_2_epochs_82783_samples
 
 fill how to use the code with other base and style images.
 
+## How was this repository created?<a name="creation">
 
+### For the descriptive approach <a name="descriptive_creation">
+The descriptive approach consists of only one script, "NST_.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main
+A lot of comments have been written to make sure the code can be somewhat understandable to somebody who just read the original paper from Gatys et. al. As for the modifications, they were mainly caused by the fact that we wanted to use our own implementation of the VGG16 network instead of the VGG19 network initially used. We also made some changes to the file tree of the repository, because we needed to harmonize this part with the rest of our repository. We did not feel the need to heavily change this code, because it does not represent the core of our work. This part was just needed to make a speed comparison with the code of the generative approach, which would be used much more extensively.
 
+### For the generative approach <a name="generative_creation">
+
+to fill
 
 ## Acknowledgements <a name="ack"></a>
 
-These are some of the resources we referred to while working on this project. You might want to check them out.
+These are some of the resources we used or consulted while working on this project:
 
 
-* The original paper on neural style transfer by [Gatys et al](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf) .
+* The original paper on neural style transfer by [Gatys et al](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf)
+* The repository used to code the descriptive approach of style transfer, by [nazianafis](https://github.com/nazianafis/Neural-Style-Transfer/tree/main) 
+
 
