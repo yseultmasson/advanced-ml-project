@@ -67,7 +67,7 @@ def style_transfer(args:ArgumentParser) -> None :
     ])
 
     style_model = ImageTransformNet().to(device) # loads the image transformation network and sends it to the device.
-    style_model.load_state_dict(torch.load(args.model_path)) # loads the weights of the desired model.
+    style_model.load_state_dict(torch.load(args.model_path, map_location=device)) # loads the weights of the desired model.
 
     pattern = re.compile(r"\/([a-zA-Z_]+)_\d+_epochs_\d+_samples_\d+_\d+\.\d+_cttwght\.model")
     model_name = pattern.search(args.model_path).group(1)
