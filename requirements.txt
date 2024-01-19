@@ -1,7 +1,11 @@
+#Install PyTorch optimized for CPU (smaller than for GPU). If you want to train the model, download a version of PyTorch optimized for GPU.
+--index-url https://download.pytorch.org/whl/cpu #url for pytorch
+--extra-index-url https://pypi.org/simple #url for other packages
+
 numpy==1.24.3
 tensorflow==2.13.1
 tqdm==4.64.1
-torch==2.1.1+cu118 
+torch==2.1.1
 scikit-learn==1.0.2 #1.3.0
 opencv_python==4.5.4.60
 pillow==10.0.1
