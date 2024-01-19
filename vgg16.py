@@ -39,4 +39,6 @@ class Vgg16(nn.Module):
                 return tuple(feature_maps)
         
         feature_maps[-2], feature_maps[-1] = feature_maps[-1], feature_maps[-2]
+        #means that for descriptive_st, the order is as follows: ['1_1', '2_1', '3_1', '4_1', '5_1, '4_2'].The first five items correspond to the style extraction, the last one corresponds to content extraction.
+
         return tuple(feature_maps)
