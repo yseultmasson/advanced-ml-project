@@ -149,13 +149,19 @@ The evalutation of the models on the test set are done in `test_results.ipynb`.
 
 ## How was this repository created?<a name="creation">
 
-### For the descriptive approach <a name="descriptive_creation">
+### Descriptive approach <a name="descriptive_creation">
 The descriptive approach consists of only one script, "descriptive_generation.py". It is a commented and lightly modified version of the script "NST.py", available here: https://github.com/nazianafis/Neural-Style-Transfer/tree/main
 A lot of comments have been written to make sure the code can be somewhat understandable to somebody who just read the original paper from Gatys et. al. As for the modifications, they were mainly caused by the fact that we wanted to use our own implementation of the VGG16 network instead of the VGG19 network initially used. We also made some changes to the file tree of the repository, because we needed to harmonize this part with the rest of our repository. We did not feel the need to heavily change this code, because it does not represent the core of our work. This part was just needed to make a speed comparison with the code of the generative approach, which would be used much more extensively.
 
-### For the generative approach <a name="generative_creation">
+### Generative approach <a name="generative_creation">
 
 to fill
+
+### Classification
+
+In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
+
+
 
 ## Acknowledgements <a name="ack"></a>
 
