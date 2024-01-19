@@ -119,14 +119,14 @@ If you want to train a new model from scratch, you first need to collect the tra
 
 Once this is done, your "images" folder should look like this :
 
-        images
-           ├───base_images
-           ├───output_images
-           ├───style
-           └───train_data
-                    ├───train2014
-                            ├───image1.jpg
-                            └───image2.jpg
+    images
+       ├───base_images
+       ├───output_images
+       ├───style
+       └───train_data
+                ├───train2014
+                        ├───image1.jpg
+                        └───image2.jpg
 
 You may use another dataset of your choice, as long as the resulting folder has the same architecture as the above one.
 
