@@ -195,7 +195,7 @@ Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in par
 
 ### Classification <a name="classification_creation">
 
-In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
+In order to fine-tune the VGG16 model on our dataset (script "classification.py"), we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs. We built the other classification scripts entirely ourselves.
 
 ## Acknowledgements <a name="ack"></a>
 
