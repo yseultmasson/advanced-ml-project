@@ -33,9 +33,10 @@ October 2023 - January 2024.
         1. [For the descriptive approach](#descriptive_generation)
         2. [For the generative approach](#generative_generation)
         3. [Data augmentation and classification](#augmentation_classification)
-4. How was this repository created? (#creation)
-    1. [For the descriptive approach](#descriptive_creation)
-    2. [For the generative approach](#generative_generation)
+4. [How was this repository created?](#creation)
+    1. [Descriptive approach](#descriptive_creation)
+    2. [Generative approach](#generative_creation)
+    3. [Classification](#classification_creation)
 5. [Acknowledgements](#ack)
 
 ## Overview <a name="overview"></a>
@@ -187,7 +188,7 @@ Our "image_transformer_net.py" script is a commented version of the "network.py"
 Our "style_transfer.py" and "train.py" scripts are inspired from the "style.py" script, but have been largely modified and customized to our needs.
 Our "vgg16.py" script was entirely built by ourselves, to meet our needs (in particular, to work for both studied style transfer methods).
 
-### Classification
+### Classification <a name="classification_creation">
 
 In order to fine-tune the VGG16 model on our dataset, we followed the [Tensorflow tutorial on transfer learning](https://www.tensorflow.org/tutorials/images/transfer_learning), and adapted it to our needs.
 
